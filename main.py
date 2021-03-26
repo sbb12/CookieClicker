@@ -19,7 +19,11 @@ while True:
     products = [driver.find_element_by_id("productPrice" + str(i)) for i in range(1, -1, -1)]
 
     cookie_count = driver.find_element_by_id("cookies").text.split(" ")[0]
-    cookie_count = int(''.join(i for i in cookie_count if i.isdigit()))   # remove delimiter
+
+    # remove delimiter from cookie count
+    for i in cookie_count:
+        if not i.isdigit():
+            cookie_count.replace(i, "")
 
     for product in products:
         if int(product.text) <= cookie_count:
