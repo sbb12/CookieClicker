@@ -10,7 +10,7 @@ print(driver.title)
 
 actions = ActionChains(driver)
 actions.click()
-driver.implicitly_wait(5)
+driver.implicitly_wait(0)
 
 cookie = driver.find_element_by_id("bigCookie")
 
@@ -19,6 +19,7 @@ cookies_per_click = 1
 
 
 def main_loop():
+    time.sleep(1)
     while True:
 
         next_product_cost, next_p_elem = get_next_purchase()
@@ -29,8 +30,20 @@ def main_loop():
         while get_cookie_count() < next_product_cost:
             cookie.click()
             clicks += 1
+
         click_rate = round(clicks / (time.time() - start))
-        
+
+        # if an upgrade is available, purchase that instead
+        for i in range(10):
+            try:
+                upgrade = driver.find_element_by_id(f"upgrade{i}")
+                x = upgrade.get_property('attributes')[1]
+                if x['nodeValue'] == 'crate upgrade enabled':
+                    next_p_elem = upgrade
+
+            except:
+                pass
+
         # actions to purchase product
         purchase_actions = ActionChains(driver)
         purchase_actions.move_to_element(next_p_elem)
@@ -38,7 +51,7 @@ def main_loop():
         purchase_actions.perform()
 
 
-def make_float(num):  # removes deliminator from string and returns as a float
+def make_float(num):
     num = num.replace(",", "")
     num_as_f = float(num)
     return num_as_f
@@ -48,16 +61,19 @@ def get_next_purchase():  # Find the next thing to purchase
     cheapest = (float("inf"), None)
 
     # find cheapest product
-    products = [driver.find_element_by_id("productPrice" + str(i)) for i in range(1, -1, -1)]
+    products = [driver.find_element_by_id("productPrice" + str(i)) for i in range(4, -1, -1)]
     for product in products:
-        product_price = make_float(product.text)
-        if product_price <= cheapest[0]:
-            cheapest = (product_price, product)
+        try:
+            product_price = make_float(product.text)
+            if product_price <= cheapest[0]:
+                cheapest = (product_price, product)
+        except:
+            pass
 
     return cheapest
 
 
-def get_cookie_count():  # get cookie count
+def get_cookie_count():
     cookie_count = driver.find_element_by_id("cookies").text.split(" ")[0]
     cookie_count = make_float(cookie_count)
     return cookie_count
