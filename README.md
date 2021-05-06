@@ -1,6 +1,15 @@
-# seleniumtest1
+# Selenium Cookie Clicker Bot
 
-simple automation of cookie clicker using selenium.
+Simple automation of Cookie Clicker using selenium.
  
-auto clicks the cookie and buys the cheapest upgrade available. Gameplay not optimised
+Uses a bunch of tools to gather information on the products and upgrades available,
+then calculates the next best thing to purchase.
+
+The bot needs to hover over upgrades to get information from the tooltip.
+
+The bot will also heavily priorities clicking upgrades as it considers it's own click rate.
+
+
+
+
 
